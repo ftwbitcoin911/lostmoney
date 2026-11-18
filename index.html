@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#070707">
+<title>宏观资产缩表录｜黑金动态版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root{
+  --bg:#070707; --panel:#101012; --panel2:#151518; --gold:#d6b45c;
+  --gold2:#f6e6ad; --gold3:#8c6b28; --text:#e9e6de; --muted:#a09b90;
+  --red:#c56c68; --line:rgba(214,180,92,.18);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:var(--text); overflow-x:hidden;
+  font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:
+    radial-gradient(ellipse at 50% -15%,rgba(179,139,53,.16),transparent 48%),
+    radial-gradient(ellipse at 100% 55%,rgba(120,88,30,.07),transparent 35%),
+    #070707;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.24;
+  background-image:linear-gradient(rgba(214,180,92,.055) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(214,180,92,.055) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:linear-gradient(to bottom,black,transparent 85%);
+}
+.noise{position:fixed;inset:0;z-index:5;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E")}
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+.shell{position:relative;z-index:1;width:min(100% - 36px,1000px);margin:54px auto 80px}
+.topline{display:flex;justify-content:space-between;align-items:center;margin:0 4px 16px;
+  color:#82775d;font:10px 'DM Mono',monospace;letter-spacing:2px;text-transform:uppercase}
+.live{display:flex;align-items:center;gap:8px}
+.live i{width:6px;height:6px;border-radius:50%;background:#b89a50;box-shadow:0 0 12px #d6b45c;animation:pulse 1.8s infinite}
+.terminal{
+  position:relative;overflow:hidden;padding:clamp(28px,6vw,72px);
+  background:linear-gradient(145deg,rgba(22,22,24,.98),rgba(9,9,11,.98) 62%);
+  border:1px solid rgba(214,180,92,.22);border-radius:10px;
+  box-shadow:0 35px 100px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.045);
+  isolation:isolate;
+}
+.terminal:before{
+  content:"";position:absolute;inset:0 15% auto;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold2),var(--gold),transparent);
+  filter:drop-shadow(0 0 7px var(--gold));animation:scanline 5s ease-in-out infinite;
+}
+.terminal:after{
+  content:"";position:absolute;inset:-40% -60%;z-index:-1;pointer-events:none;
+  background:linear-gradient(110deg,transparent 42%,rgba(255,226,150,.035) 49%,transparent 56%);
+  transform:translateX(-45%);animation:sweep 11s ease-in-out infinite;
+}
+.corner{position:absolute;width:22px;height:22px;border-color:rgba(214,180,92,.65);opacity:.7}
+.c1{top:13px;left:13px;border-top:1px solid;border-left:1px solid}
+.c2{top:13px;right:13px;border-top:1px solid;border-right:1px solid}
+.c3{bottom:13px;left:13px;border-bottom:1px solid;border-left:1px solid}
+.c4{bottom:13px;right:13px;border-bottom:1px solid;border-right:1px solid}
+.header{text-align:center;padding-bottom:34px;border-bottom:1px solid var(--line)}
+.eyebrow{font:10px 'DM Mono',monospace;color:#9c8144;letter-spacing:4px;margin-bottom:18px}
+h1{
+  margin:0;font-size:clamp(27px,5vw,43px);font-weight:600;letter-spacing:clamp(3px,1vw,8px);
+  color:var(--gold2);background:linear-gradient(105deg,#98752d 5%,#f8edc6 32%,#c69b3f 53%,#fff0bc 72%,#997329 95%);
+  background-size:220% auto;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:goldflow 8s linear infinite;
+}
+.subtitle{margin-top:13px;color:#887348;font:10px 'DM Mono',monospace;letter-spacing:3px}
+.rule{display:flex;align-items:center;justify-content:center;gap:12px;margin:25px auto 0;color:#947b43;font-size:10px;letter-spacing:2px}
+.rule:before,.rule:after{content:"";width:44px;height:1px;background:linear-gradient(90deg,transparent,var(--gold3))}
+.rule:after{transform:rotate(180deg)}
+.manifesto{max-width:720px;margin:40px auto 48px;text-align:center;font-size:clamp(17px,2.4vw,23px);
+  line-height:1.9;font-weight:500;color:#d9d5ca;letter-spacing:1px}
+.manifesto strong{color:var(--gold2);font-weight:600;text-shadow:0 0 22px rgba(214,180,92,.18)}
+.manifesto .subline{display:block;margin-top:5px;color:#aaa398;font-size:.78em;font-weight:300;letter-spacing:.5px}
+.section-head{display:flex;align-items:center;gap:14px;margin:0 0 22px;color:#a68a4d;font:10px 'DM Mono',monospace;letter-spacing:2px}
+.section-head:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--line),transparent)}
+.content{display:grid;gap:0}
+.intro{font-size:14px;line-height:2.05;color:#b7b2a8;margin:0 0 34px;text-align:justify}
+.asset{
+  position:relative;display:grid;grid-template-columns:150px 1fr;gap:22px;
+  padding:23px 20px;margin:0 -20px;border:1px solid transparent;border-radius:7px;
+  transition:background .35s,border-color .35s,transform .35s;
+}
+.asset:hover{background:linear-gradient(100deg,rgba(214,180,92,.075),rgba(214,180,92,.012));
+  border-color:rgba(214,180,92,.17);transform:translateX(5px)}
+.asset:before{content:"";position:absolute;left:0;top:25px;bottom:25px;width:2px;
+  background:linear-gradient(180deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .35s}
+.asset:hover:before{opacity:1}
+.asset-label{color:var(--gold2);font-size:13px;font-weight:600;letter-spacing:1px;white-space:nowrap}
+.asset-index{display:block;margin-top:7px;color:#655637;font:9px 'DM Mono',monospace;letter-spacing:2px}
+.asset p{margin:0;color:#aaa69d;font-size:14px;line-height:2;text-align:justify}
+.down{color:var(--red);font:600 13px 'DM Mono',monospace;white-space:nowrap}
+.gold{color:var(--gold2);font:600 13px 'DM Mono',monospace}
+.divider{height:1px;margin:23px 0;background:linear-gradient(90deg,transparent,rgba(214,180,92,.22),transparent)}
+.conclusion{
+  position:relative;margin-top:42px;padding:30px 34px;border:1px solid rgba(214,180,92,.23);
+  border-radius:7px;background:linear-gradient(120deg,rgba(214,180,92,.075),rgba(214,180,92,.018));
+  box-shadow:inset 0 0 35px rgba(214,180,92,.025);overflow:hidden
+}
+.conclusion:before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#f4dfa0,#9b762e)}
+.conclusion-label{font:9px 'DM Mono',monospace;color:#a88b4d;letter-spacing:3px;margin-bottom:14px}
+.conclusion p{margin:0;color:#d8d4ca;font-size:16px;font-weight:500;line-height:2}
+.conclusion strong{color:var(--gold2);text-shadow:0 0 18px rgba(214,180,92,.2)}
+.footer{display:flex;justify-content:space-between;align-items:center;margin-top:34px;color:#625b4c;font:9px 'DM Mono',monospace;letter-spacing:1.5px}
+.footer .author{color:#9d8248}
+.progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:10;background:linear-gradient(90deg,#8e6c2d,#f7e8b0,#b48b39);box-shadow:0 0 10px #d6b45c}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+@keyframes pulse{0%,100%{opacity:.5;transform:scale(.8)}50%{opacity:1;transform:scale(1.25)}}
+@keyframes goldflow{to{background-position:220% center}}
+@keyframes sweep{0%,20%{transform:translateX(-45%)}70%,100%{transform:translateX(45%)}}
+@keyframes scanline{0%,100%{opacity:.25;transform:scaleX(.65)}50%{opacity:.9;transform:scaleX(1)}}
+@media(max-width:650px){
+  .shell{width:min(100% - 22px,1000px);margin:20px auto 40px}
+  .topline{font-size:8px;letter-spacing:1px}
+  .terminal{padding:34px 22px;border-radius:8px}
+  .manifesto{margin:30px auto 35px}
+  .asset{grid-template-columns:1fr;gap:8px;padding:19px 12px;margin:0 -12px}
+  .asset-index{display:inline;margin-left:9px}
+  .asset p,.intro{font-size:13px}
+  .conclusion{padding:23px 22px}
+  .footer{gap:12px;flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<canvas id="particles"></canvas><div class="noise"></div>
+<main class="shell">
+  <div class="topline"><span>911 / MACRO INTELLIGENCE</span><span class="live"><i></i> CAPITAL CYCLE · OBSERVATION</span></div>
+  <article class="terminal">
+    <i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>
+    <header class="header reveal">
+      <div class="eyebrow">GLOBAL CAPITAL · DELEVERAGING CYCLE</div>
+      <h1>宏观资产缩表录</h1>
+      <div class="subtitle">MACRO ASSET DELEVERAGING</div>
+      <div class="rule">MARKET REPRICING</div>
+    </header>
+
+    <div class="manifesto reveal">
+      时代出清面前，<strong>无人幸免。</strong>
+      <span class="subline">当潮水褪去，这或许是市场给予所有人最公平的洗礼。</span>
+    </div>
+
+    <section class="content">
+      <div class="section-head reveal">01 / THE BIG PICTURE</div>
+      <p class="intro reveal">纵观当下，一场无差别的财富缩表正在上演。炒股的在跌，买房的在跌，玩币的在跌，买金的在跌，囤酒的在跌——甚至，连将财富转移至海外的群体也迎来了补税潮；而对于某些特定群体而言，过去九个月里，68万人的落马与涉案资金的归零，是更为彻底的清算。</p>
+      <p class="intro reveal">剥开现象看本质，各大类资产的底层逻辑正在经受严酷的重塑：</p>
+      <div class="divider reveal"></div>
+      <div class="section-head reveal">02 / ASSET CLASSES · REPRICING</div>
+
+      <div class="asset reveal"><div class="asset-label">权益市场<span class="asset-index">01 / EQUITY</span></div><p>创业板指自高点回撤 <span class="down">47%</span>。数千只个股泥沙俱下，指数勉强退守 3,600 点。流动性的退潮，让曾经的成长溢价无处遁形。</p></div>
+      <div class="asset reveal"><div class="asset-label">地产链条<span class="asset-index">02 / PROPERTY</span></div><p>全国卖地收入从 2021 年的 <span class="gold">8.7 万亿</span>，骤降至 2025 年的 <span class="gold">4.15 万亿</span>，四年间惨遭腰斩。从地方财政到开发商，再到终端业主，整条产业链的利益正在重新分配，无人能独善其身。</p></div>
+      <div class="asset reveal"><div class="asset-label">数字资产<span class="asset-index">03 / DIGITAL</span></div><p>比特币从 <span class="gold">12.6 万美元</span>的高位坠落至 <span class="gold">6.3 万</span>。所谓的“数字黄金”神话，在真正的周期下行面前，其波动性远超传统避险资产。</p></div>
+      <div class="asset reveal"><div class="asset-label">避险贵金属<span class="asset-index">04 / METALS</span></div><p>被奉为圭臬的黄金，年初触及 <span class="gold">5,400 美元</span>后，如今跌回 3,900 下方，较高点折损近 <span class="down">30%</span>；白银更是从 121 美元暴跌至 50 美元以下，跌幅近 <span class="down">60%</span>。“乱世买金”的古老箴言，在极端的流动性抽离面前暂时失效。</p></div>
+      <div class="asset reveal"><div class="asset-label">另类收藏<span class="asset-index">05 / COLLECTIBLES</span></div><p>茅台酒的金融属性正在被强力剥离。从 2021 年飞天整箱逼近 4,000 元的巅峰，到如今散瓶 1,670 元、二手倒挂，四年间价值几近腰斩。被异化为理财产品的消费品，终究要踏上价值回归的还账之路。</p></div>
+      <div class="asset reveal"><div class="asset-label">离岸财富<span class="asset-index">06 / OFFSHORE</span></div><p>藏进信托的离岸资产，今年迎来了超 <span class="gold">1,600 亿</span>的集体补税。高墙筑起，藏得住财富的形，守不住财富的实。</p></div>
+      <div class="asset reveal"><div class="asset-label">特定阶层<span class="asset-index">07 / ACCOUNTABILITY</span></div><p>前九个月立案 80 万件，处分 68 万人（含省部级及以上 105 人）。这已非简单的跌幅问题，而是资产直接“归零”的彻底清算。</p></div>
+    </section>
+
+    <section class="conclusion reveal">
+      <div class="conclusion-label">03 / THE FINAL THESIS</div>
+      <p>市场收走的是价格，纪委收走的是全部。<br>这轮史诗级的资产缩表，缩掉的不仅是资产负债表上的数字，更是所有人对旧时代的<strong>安全感</strong>。</p>
+    </section>
+    <footer class="footer"><span>MACRO CYCLE NOTE / 2026</span><span class="author">AUTHOR · 911</span><span>END OF RECORD</span></footer>
+  </article>
+</main>
+<script>
+/* 滚动揭示 + 阅读进度 */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((entry, index) => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+const progress=document.getElementById('progress');
+function updateProgress(){
+  const max=document.documentElement.scrollHeight-innerHeight;
+  progress.style.width=(max>0?scrollY/max*100:0)+'%';
+}
+addEventListener('scroll',updateProgress,{passive:true}); updateProgress();
+
+/* 轻量金色粒子：低密度、缓慢漂浮，不影响阅读 */
+const canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');
+let w,h,dpr,particles=[];
+function resize(){
+  dpr=Math.min(devicePixelRatio||1,2);w=innerWidth;h=innerHeight;
+  canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.width=w+'px';canvas.style.height=h+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const count=Math.min(55,Math.floor(w/24));
+  particles=Array.from({length:count},()=>({x:Math.random()*w,y:Math.random()*h,
+    r:Math.random()*1.25+.25,v:Math.random()*.22+.06,a:Math.random()*.42+.12,
+    phase:Math.random()*Math.PI*2}));
+}
+function draw(){
+  ctx.clearRect(0,0,w,h);
+  for(const p of particles){
+    p.y-=p.v;p.phase+=.008;
+    if(p.y<-5){p.y=h+5;p.x=Math.random()*w}
+    const alpha=p.a*(.65+.35*Math.sin(p.phase));
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(224,190,108,${alpha})`;ctx.fill();
+  }
+  requestAnimationFrame(draw);
+}
+addEventListener('resize',resize);resize();draw();
+</script>
+</body>
+</html>
